@@ -1,11 +1,20 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import BookCard from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, SlidersHorizontal } from "lucide-react";
 
 const Shop = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("All Books");
+
+  useEffect(() => {
+    if (location.state?.category) {
+      setSelectedCategory(location.state.category);
+    }
+  }, [location.state]);
 
   const books = [
     {
@@ -62,6 +71,13 @@ const Shop = () => {
     "Biography",
   ];
 
+  const filteredBooks = books.filter((book) => {
+    const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         book.author.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "All Books" || book.title.includes(selectedCategory);
+    return matchesSearch && matchesCategory;
+  });
+
   return (
     <div className="min-h-screen py-12">
       <div className="container mx-auto px-4">
@@ -94,7 +110,12 @@ const Shop = () => {
         {/* Categories */}
         <div className="mb-8 flex flex-wrap gap-2 animate-fade-in">
           {categories.map((category) => (
-            <Button key={category} variant="outline" size="sm">
+            <Button 
+              key={category} 
+              variant={selectedCategory === category ? "default" : "outline"} 
+              size="sm"
+              onClick={() => setSelectedCategory(category)}
+            >
               {category}
             </Button>
           ))}
@@ -102,7 +123,7 @@ const Shop = () => {
 
         {/* Book Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {books.map((book, index) => (
+          {filteredBooks.map((book, index) => (
             <div
               key={book.id}
               className="animate-fade-in"
@@ -113,14 +134,11 @@ const Shop = () => {
           ))}
         </div>
 
-        {/* Pagination */}
-        <div className="mt-12 flex justify-center gap-2">
-          <Button variant="outline">Previous</Button>
-          <Button variant="outline">1</Button>
-          <Button>2</Button>
-          <Button variant="outline">3</Button>
-          <Button variant="outline">Next</Button>
-        </div>
+        {filteredBooks.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground text-lg">No books found matching your criteria.</p>
+          </div>
+        )}
       </div>
     </div>
   );

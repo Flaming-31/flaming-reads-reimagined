@@ -74,7 +74,8 @@ const Collections = () => {
             return (
               <Link
                 key={collection.id}
-                to={`/collections/${collection.id}`}
+                to="/shop"
+                state={{ category: collection.title }}
                 className="animate-fade-in"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
