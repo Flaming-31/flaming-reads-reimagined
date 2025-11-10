@@ -1,8 +1,11 @@
 import { ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Link } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
 
 interface BookCardProps {
+  id?: string | number;
   title: string;
   author: string;
   price: number;
@@ -10,7 +13,8 @@ interface BookCardProps {
   featured?: boolean;
 }
 
-const BookCard = ({ title, author, price, image, featured }: BookCardProps) => {
+const BookCard = ({ id, title, author, price, image, featured }: BookCardProps) => {
+  const { addToCart, loading } = useCart();
   return (
     <Card className="group overflow-hidden card-shadow hover:hover-shadow transition-all duration-300">
       <div className="relative overflow-hidden aspect-[3/4] bg-muted">
@@ -33,13 +37,24 @@ const BookCard = ({ title, author, price, image, featured }: BookCardProps) => {
         <p className="font-semibold text-xl text-primary">₦{price.toLocaleString()}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 gap-2">
-        <Button variant="outline" size="sm" className="flex-1">
-          View Details
-        </Button>
-        <Button size="sm" className="flex-1 gap-2">
-          <ShoppingCart className="h-4 w-4" />
-          Add to Cart
-        </Button>
+        {id && (
+          <Link to={`/product/${id}`} className="flex-1">
+            <Button variant="outline" size="sm" className="w-full">
+              View Details
+            </Button>
+          </Link>
+        )}
+        {id && (
+          <Button 
+            size="sm" 
+            className="flex-1 gap-2"
+            onClick={() => addToCart(id.toString())}
+            disabled={loading}
+          >
+            <ShoppingCart className="h-4 w-4" />
+            Add to Cart
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );
