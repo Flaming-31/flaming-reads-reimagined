@@ -6,30 +6,6 @@
     <title>Content Manager - Flaming Books</title>
   </head>
   <body>
-    <!-- Prevent auto-initialization that triggers Netlify detection -->
-    <script>
-      window.CMS_MANUAL_INIT = true;
-    </script>
-
-    <!-- Load Decap CMS -->
     <script src="https://unpkg.com/decap-cms@latest/dist/decap-cms.js"></script>
-
-    <!-- Manually initialize CMS with your config -->
-    <script>
-      CMS.init({
-        config: {
-          backend: {
-            name: 'github',
-            repo: 'Flaming-31/flaming-reads-reimagined',
-            branch: 'main',
-            auth_endpoint: 'https://api.decapcms.org/auth',
-            app_id: 'xxxxxxx' // replace with your actual Client ID
-          },
-          publish_mode: 'editorial_workflow',
-          media_folder: 'public/images/uploads',
-          public_folder: '/images/uploads',
-        }
-      });
-    </script>
   </body>
 </html>
