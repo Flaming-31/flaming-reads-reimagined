@@ -2,9 +2,8 @@ backend:
   name: github
   repo: Flaming-31/flaming-reads-reimagined
   branch: main
-  auth_endpoint: https://api.decapcms.org/auth
-  app_id: Ov23liU4ThtPeGQhcTYl
-
+  # auth_endpoint: https://api.decapcms.org/auth
+  # app_id: Ov23liU4ThtPeGQhcTYl
 
 # Optional: Editorial workflow for content approval
 publish_mode: editorial_workflow
@@ -12,11 +11,6 @@ publish_mode: editorial_workflow
 # Media folders
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
-
-
-media_library:
-  name: "decap-media-library"  # or “uploadcare” if you want to use Uploadcare
-
 
 collections:
   - name: "products"
