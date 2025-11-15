@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Flaming-31/flaming-reads-reimagined
   branch: main
-  auth_endpoint: https://decap-oauth.netlify.app/auth
+  # auth_endpoint: https://decap-oauth.netlify.app/auth
   app_id: Ov23liU4ThtPeGQhcTYl
 
 # Optional: Editorial workflow for content approval
