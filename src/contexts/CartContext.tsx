@@ -87,25 +87,30 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
     setLoading(true);
     
-    const existingItem = cart.find(item => item.product_id === productId);
-    
-    if (existingItem) {
-      await updateQuantity(existingItem.id, existingItem.quantity + 1);
-    } else {
-      const { error } = await supabase
-        .from("cart")
-        .insert({ user_id: user.id, product_id: productId, quantity: 1 });
-
-      if (error) {
-        toast.error("Failed to add to cart");
-        console.error(error);
+    try {
+      const existingItem = cart.find(item => item.product_id === productId);
+      
+      if (existingItem) {
+        await updateQuantity(existingItem.id, existingItem.quantity + 1);
       } else {
-        toast.success("Added to cart");
-        await loadCart();
+        const { error } = await supabase
+          .from("cart")
+          .insert({ user_id: user.id, product_id: productId, quantity: 1 });
+
+        if (error) {
+          console.error("Cart error:", error);
+          toast.error(`Failed to add to cart: ${error.message}`);
+        } else {
+          toast.success("Added to cart");
+          await loadCart();
+        }
       }
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   const removeFromCart = async (cartItemId: string) => {
