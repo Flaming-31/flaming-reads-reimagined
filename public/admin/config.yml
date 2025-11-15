@@ -7,11 +7,11 @@
 
 
 backend:
-  name: github
-  repo: your-username/your-repo-name  # e.g., "john/flamingbooks"
+  name: git-gateway
+  # repo: your-username/your-repo-name  # e.g., "john/flamingbooks"
   branch: main
-  base_url: https://api.netlify.com
-  auth_endpoint: auth
+  # base_url: https://api.netlify.com
+  # auth_endpoint: auth
 
 # Optional: Editorial workflow for content approval
 publish_mode: editorial_workflow
