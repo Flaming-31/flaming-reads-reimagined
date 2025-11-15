@@ -59,7 +59,7 @@ const Home = () => {
                 </Button>
               </Link>
               <Link to="/collections">
-                <Button size="lg" variant="outline" className="border-primary-foreground hover:bg-primary-foreground hover:text-primary">
+                <Button size="lg" variant="secondary">
                   Browse Collections
                 </Button>
               </Link>

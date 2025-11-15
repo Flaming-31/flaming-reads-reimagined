@@ -121,13 +121,44 @@ To allow users to sign up directly from your site, add the Netlify Identity widg
 2. Click "Invite users"
 3. Enter email addresses for people who should have access to the CMS
 
+### 8. Important: Handling Invite Acceptance
+
+When users click the invite link, they will be redirected to your site with a token in the URL. **This is expected behavior!** Follow these steps to complete the setup:
+
+**For the invited user:**
+1. Click the invite link in your email
+2. You'll be redirected to your site with a URL like: `https://yoursite.com/#invite_token=...`
+3. **Important:** Navigate to `https://yoursite.com/admin` manually or click on your admin link
+4. You should now see the Netlify CMS login screen
+5. Click "Continue with Netlify Identity" or use the login form
+6. Set your password when prompted
+7. You're now logged in and can access the CMS
+
+**Common Issue - Token in URL but nothing happens:**
+- This is normal! The token is used by Netlify Identity for authentication
+- Simply navigate to `/admin` on your site after being redirected
+- The system will automatically recognize the token and complete your setup
+
+**Alternative Method:**
+If the above doesn't work, you can:
+1. Go directly to `yoursite.com/admin`
+2. Click "Forgot password?"
+3. Use the email where you received the invite
+4. Set a new password
+5. Log in with your email and new password
+
 ## Accessing the CMS
 
 Once setup is complete:
 
-1. Go to `yourdomain.com/admin` (or `localhost:8080/admin` during development)
+1. Go to `yourdomain.com/admin` (or during development, your preview URL + `/admin`)
 2. Sign in with your Netlify Identity credentials
 3. Start managing your content!
+
+**For first-time login after invite:**
+- If you just accepted an invite, you might need to set your password first
+- Use "Forgot password" if you're having trouble logging in
+- Make sure you're using the email that received the invite
 
 ## Content Management
 
@@ -168,11 +199,23 @@ Create a script to automatically sync CMS content to Supabase when changes are p
 - Ensure `public/admin/index.html` exists
 - Check that your site is deployed to Netlify
 - Verify Git Gateway is enabled
+- Try accessing `/admin/` with a trailing slash
 
 ### Authentication errors
 - Make sure Netlify Identity is enabled
 - Check that you've been invited as a user
 - Clear browser cache and try again
+- Try the "Forgot password" flow to reset your credentials
+
+### Invite redirect doesn't work
+- This is expected! After clicking invite, navigate to `/admin` manually
+- The token in the URL is used automatically by Netlify Identity
+- If still having issues, use "Forgot password" to set a new password
+
+### "Failed to load settings" error
+- Verify `config.yml` is in the correct location (`public/admin/config.yml`)
+- Check that the YAML syntax is valid
+- Ensure Git Gateway is properly enabled in Netlify Identity settings
 
 ### Images not uploading
 - Verify `media_folder` path in config.yml

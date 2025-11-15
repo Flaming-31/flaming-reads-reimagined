@@ -4,11 +4,25 @@ import BookCard from "@/components/BookCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+interface Product {
+  id: string;
+  title: string;
+  author: string;
+  price: number;
+  image: string;
+  category: string;
+  featured: boolean;
+}
 
 const Shop = () => {
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All Books");
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (location.state?.category) {
@@ -16,65 +30,45 @@ const Shop = () => {
     }
   }, [location.state]);
 
-  const books = [
-    {
-      id: 1,
-      title: "The Purpose Driven Life",
-      author: "Rick Warren",
-      price: 5500,
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=500&fit=crop",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Mere Christianity",
-      author: "C.S. Lewis",
-      price: 4800,
-      image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=500&fit=crop",
-    },
-    {
-      id: 3,
-      title: "The Case for Christ",
-      author: "Lee Strobel",
-      price: 6200,
-      image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=500&fit=crop",
-    },
-    {
-      id: 4,
-      title: "Radical",
-      author: "David Platt",
-      price: 5000,
-      image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=500&fit=crop",
-    },
-    {
-      id: 5,
-      title: "The Hiding Place",
-      author: "Corrie ten Boom",
-      price: 4500,
-      image: "https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=400&h=500&fit=crop",
-    },
-    {
-      id: 6,
-      title: "Boundaries",
-      author: "Henry Cloud",
-      price: 5800,
-      image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=500&fit=crop",
-    },
-  ];
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, title, author, price, image, category, featured")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setProducts(data || []);
+    } catch (error) {
+      console.error("Error loading products:", error);
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const categories = [
     "All Books",
-    "Christian Living",
     "Theology",
-    "Devotionals",
-    "Family & Relationships",
+    "Devotional",
+    "Christian Living",
+    "Bible Study",
     "Biography",
+    "Children",
+    "Youth",
+    "Fiction",
+    "Reference"
   ];
 
-  const filteredBooks = books.filter((book) => {
-    const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         book.author.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === "All Books" || book.title.includes(selectedCategory);
+  const filteredBooks = products.filter((product) => {
+    const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         product.author.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "All Books" || product.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
@@ -122,22 +116,30 @@ const Shop = () => {
         </div>
 
         {/* Book Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredBooks.map((book, index) => (
-            <div
-              key={book.id}
-              className="animate-fade-in"
-              style={{ animationDelay: `${index * 0.05}s` }}
-            >
-              <BookCard {...book} />
-            </div>
-          ))}
-        </div>
-
-        {filteredBooks.length === 0 && (
+        {loading ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground text-lg">No books found matching your criteria.</p>
+            <p className="text-muted-foreground text-lg">Loading products...</p>
           </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredBooks.map((book, index) => (
+                <div
+                  key={book.id}
+                  className="animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <BookCard {...book} />
+                </div>
+              ))}
+            </div>
+
+            {filteredBooks.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-lg">No books found matching your criteria.</p>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
