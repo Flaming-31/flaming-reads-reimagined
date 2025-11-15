@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: your-username/your-repo-name
+  repo: Flaming-31/flaming-reads-reimagined
   branch: main
 
 media_folder: "public/images/uploads"
