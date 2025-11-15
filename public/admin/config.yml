@@ -8,8 +8,6 @@ backend:
   name: github
   repo: Flaming-31/flaming-reads-reimagined
   branch: main
-  base_url: https://api.netlify.com
-  auth_endpoint: auth
 
 # Optional: Editorial workflow for content approval
 publish_mode: editorial_workflow
