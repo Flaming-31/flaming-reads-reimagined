@@ -2,16 +2,14 @@
 #   name: github
 #   repo: Flaming-31/flaming-reads-reimagined
 #   branch: main
-#   auth_endpoint: https://api.decapcms.org/auth
-#   app_id: Ov23liU4ThtPeGQhcTYl
-
-
+#   auth_endpoint: https://api.netlify.com
+  # app_id: Ov23liU4ThtPeGQhcTYl
 backend:
-  name: git-gateway
-  # repo: your-username/your-repo-name  # e.g., "john/flamingbooks"
+  name: github
+  repo: Flaming-31/flaming-reads-reimagined
   branch: main
-  # base_url: https://api.netlify.com
-  # auth_endpoint: auth
+  base_url: https://api.netlify.com
+  auth_endpoint: auth
 
 # Optional: Editorial workflow for content approval
 publish_mode: editorial_workflow
