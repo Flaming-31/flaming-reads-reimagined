@@ -5,6 +5,9 @@ backend:
   auth_endpoint: https://api.decapcms.org/auth
   app_id: Ov23liU4ThtPeGQhcTYl
 
+# Optional: Editorial workflow for content approval
+publish_mode: editorial_workflow
+
 media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
