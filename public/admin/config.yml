@@ -3,7 +3,7 @@ backend:
   repo: Flaming-31/flaming-reads-reimagined
   branch: main
   # auth_endpoint: https://api.decapcms.org/auth
-  base_url: https://flaming-reads-reimagined-b62t.vercel.app/api
+  base_url: https://flaming-reads-reimagined.vercel.app/api
   auth_endpoint: auth
   # app_id: Ov23liU4ThtPeGQhcTYl
 
