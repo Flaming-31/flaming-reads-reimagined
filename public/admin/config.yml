@@ -2,7 +2,7 @@ backend:
   name: github
   repo: Flaming-31/flaming-reads-reimagined
   branch: main
-  base_url: https://api.decapcms.org
+  base_url: https://flaming-reads-reimagined.vercel.app/api
   auth_endpoint: auth
 
 # Optional: Editorial workflow for content approval
