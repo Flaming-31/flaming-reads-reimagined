@@ -1,19 +1,18 @@
 const axios = require('axios');
-const CLIENT_ID = process.env.OAUTH_CLIENT_ID;
-const CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET;
 
 module.exports = async (req, res) => {
-  const { code } = req.query;
-
-  if (!CLIENT_ID || !CLIENT_SECRET) {
-    return res.status(500).json({ error: 'Missing OAuth credentials' });
-  }
-
-  if (!code) {
-    return res.status(400).json({ error: 'Missing authorization code' });
-  }
-
   try {
+    const { code } = req.query;
+    const CLIENT_ID = process.env.OAUTH_CLIENT_ID;
+    const CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET;
+
+    if (!CLIENT_ID || !CLIENT_SECRET) {
+      return res.status(500).json({ error: 'Missing OAuth credentials' });
+    }
+
+    if (!code) {
+      return res.status(400).json({ error: 'Missing authorization code' });
+    }
     const response = await axios.post(
       'https://github.com/login/oauth/access_token',
       {
