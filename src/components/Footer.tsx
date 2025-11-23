@@ -11,9 +11,12 @@ const Footer = () => {
           {/* Brand */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 hero-gradient rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-playfair font-bold text-xl">FB</span>
-              </div>
+              <img
+                src="/logo.svg"
+                alt="Flaming Books logo"
+                className="w-12 h-12 object-contain drop-shadow-sm"
+                loading="lazy"
+              />
               <div>
                 <h3 className="font-playfair font-bold text-lg">Flaming Books</h3>
                 <p className="text-xs text-muted-foreground">Nigeria</p>

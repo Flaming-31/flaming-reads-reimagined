@@ -3,15 +3,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import type { BookRecord } from "@/lib/books";
 
-interface BookCardProps {
-  id?: string | number;
-  title: string;
-  author: string;
-  price: number;
-  image: string;
-  featured?: boolean;
-}
+type BookCardProps = Pick<BookRecord, "id" | "title" | "author" | "price" | "image" | "featured">;
 
 const BookCard = ({ id, title, author, price, image, featured }: BookCardProps) => {
   const { addToCart, loading } = useCart();
@@ -37,24 +31,20 @@ const BookCard = ({ id, title, author, price, image, featured }: BookCardProps) 
         <p className="font-semibold text-xl text-primary">₦{price.toLocaleString()}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 gap-2">
-        {id && (
-          <Link to={`/product/${id}`} className="flex-1">
-            <Button variant="outline" size="sm" className="w-full">
-              View Details
-            </Button>
-          </Link>
-        )}
-        {id && (
-          <Button 
-            size="sm" 
-            className="flex-1 gap-2"
-            onClick={() => addToCart(id.toString())}
-            disabled={loading}
-          >
-            <ShoppingCart className="h-4 w-4" />
-            Add to Cart
+        <Link to={`/product/${id}`} className="flex-1">
+          <Button variant="outline" size="sm" className="w-full">
+            View Details
           </Button>
-        )}
+        </Link>
+        <Button 
+          size="sm" 
+          className="flex-1 gap-2"
+          onClick={() => addToCart(id)}
+          disabled={loading}
+        >
+          <ShoppingCart className="h-4 w-4" />
+          Add to Cart
+        </Button>
       </CardFooter>
     </Card>
   );

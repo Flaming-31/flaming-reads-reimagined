@@ -5,13 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { PaystackButton } from "react-paystack";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Checkout = () => {
   const { cart, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,52 +33,18 @@ const Checkout = () => {
 
   const createOrder = async (reference: string) => {
     setLoading(true);
-    
-    const { data: { user } } = await supabase.auth.getUser();
+
     if (!user) {
       toast.error("Please sign in to complete your order");
-      return;
-    }
-
-    const { data: order, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        user_id: user.id,
-        total_amount: total,
-        status: "completed",
-        payment_reference: reference,
-        shipping_address: formData.address,
-      })
-      .select()
-      .single();
-
-    if (orderError) {
-      toast.error("Failed to create order");
-      console.error(orderError);
       setLoading(false);
       return;
     }
 
-    const orderItems = cart.map(item => ({
-      order_id: order.id,
-      product_id: item.product_id,
-      quantity: item.quantity,
-      price: item.product.price,
-    }));
-
-    const { error: itemsError } = await supabase
-      .from("order_items")
-      .insert(orderItems);
-
-    if (itemsError) {
-      toast.error("Failed to create order items");
-      console.error(itemsError);
-      setLoading(false);
-      return;
-    }
+    // Simulate order creation locally
+    await new Promise((resolve) => setTimeout(resolve, 600));
 
     await clearCart();
-    toast.success("Order placed successfully!");
+    toast.success(`Order placed successfully! Ref: ${reference}`);
     navigate("/");
     setLoading(false);
   };
@@ -86,7 +53,7 @@ const Checkout = () => {
     reference: new Date().getTime().toString(),
     email: formData.email,
     amount: total * 100, // Paystack expects amount in kobo
-    publicKey: "pk_test_xxxxxxxxxxxxx", // Replace with your Paystack public key
+    publicKey: "pk_test_948eacc907fee263bff53d1de566263773218ce2", // Replace with your Paystack public key
   };
 
   const handlePaystackSuccess = (reference: any) => {

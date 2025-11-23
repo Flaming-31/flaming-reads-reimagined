@@ -1,38 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, ShoppingCart, Search, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/contexts/CartContext";
-import { supabase } from "@/integrations/supabase/client";
-import { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const { user, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const { cart } = useCart();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    signOut();
     navigate("/");
   };
 
@@ -45,6 +32,7 @@ const Navbar = () => {
     { name: "Authors", path: "/authors" },
     { name: "Events", path: "/events" },
     { name: "Gallery", path: "/gallery" },
+    { name: "Blog", path: "/blog" },
     { name: "Testimonials", path: "/testimonials" },
     { name: "About", path: "/about" },
     { name: "Contact", path: "/contact" },
@@ -58,9 +46,12 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 hero-gradient rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-playfair font-bold text-xl">FB</span>
-            </div>
+            <img
+              src="/logo.svg"
+              alt="Flaming Books logo"
+              className="w-12 h-12 object-contain drop-shadow-sm"
+              loading="lazy"
+            />
             <div className="hidden sm:block">
               <h1 className="font-playfair font-bold text-xl text-foreground">Flaming Books</h1>
               <p className="text-xs text-muted-foreground">Nigeria</p>

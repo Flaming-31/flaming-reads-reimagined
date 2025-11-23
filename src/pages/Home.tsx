@@ -1,43 +1,39 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Users, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import BookCard from "@/components/BookCard";
+import { getFeaturedBooks } from "@/lib/books";
+import { submitSubscription, SubscriptionError } from "@/lib/subscription";
+import { toast } from "sonner";
 
 const Home = () => {
-  const featuredBooks = [
-    {
-      id: 1,
-      title: "The Purpose Driven Life",
-      author: "Rick Warren",
-      price: 5500,
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=500&fit=crop",
-      featured: true,
-    },
-    {
-      id: 2,
-      title: "Mere Christianity",
-      author: "C.S. Lewis",
-      price: 4800,
-      image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=500&fit=crop",
-      featured: true,
-    },
-    {
-      id: 3,
-      title: "The Case for Christ",
-      author: "Lee Strobel",
-      price: 6200,
-      image: "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?w=400&h=500&fit=crop",
-      featured: true,
-    },
-    {
-      id: 4,
-      title: "Radical",
-      author: "David Platt",
-      price: 5000,
-      image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=500&fit=crop",
-      featured: true,
-    },
-  ];
+  const featuredBooks = getFeaturedBooks(4);
+  const [email, setEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!email) {
+      toast.error("Please enter your email");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await submitSubscription(email);
+      toast.success("Thanks for subscribing!");
+      setEmail("");
+    } catch (error) {
+      const message =
+        error instanceof SubscriptionError
+          ? error.message
+          : "Unable to subscribe right now. Please try again.";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -147,14 +143,19 @@ const Home = () => {
             <p className="text-muted-foreground text-lg mb-8">
               Subscribe to our newsletter for book recommendations, exclusive offers, and spiritual insights.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={handleSubscribe}>
               <input
                 type="email"
                 placeholder="Enter your email"
                 className="flex-1 px-4 py-3 rounded-md border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
-              <Button size="lg">Subscribe</Button>
-            </div>
+              <Button size="lg" type="submit" disabled={submitting}>
+                {submitting ? "Subscribing..." : "Subscribe"}
+              </Button>
+            </form>
           </div>
         </div>
       </section>

@@ -1,52 +1,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
+import { getAllAuthors } from "@/lib/authors";
+import { Link } from "react-router-dom";
 
 const Authors = () => {
-  const authors = [
-    {
-      id: 1,
-      name: "Rick Warren",
-      bio: "Pastor, author, and global spiritual leader. Best known for The Purpose Driven Life, which has transformed millions of lives worldwide.",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop",
-      bookCount: 8,
-    },
-    {
-      id: 2,
-      name: "C.S. Lewis",
-      bio: "British writer and theologian. His works on Christian apologetics and fiction have become classics of Christian literature.",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop",
-      bookCount: 12,
-    },
-    {
-      id: 3,
-      name: "Lee Strobel",
-      bio: "Former investigative journalist and award-winning author. Known for his evidence-based approach to Christian faith.",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop",
-      bookCount: 6,
-    },
-    {
-      id: 4,
-      name: "Joyce Meyer",
-      bio: "Bible teacher and bestselling author. Her practical teaching style has helped millions apply biblical principles to everyday life.",
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-      bookCount: 15,
-    },
-    {
-      id: 5,
-      name: "Max Lucado",
-      bio: "Pastor and bestselling Christian author. Known for his accessible writing style and encouraging message of God's love.",
-      image: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=400&h=400&fit=crop",
-      bookCount: 10,
-    },
-    {
-      id: 6,
-      name: "Priscilla Shirer",
-      bio: "Bible teacher, author, and actress. Her dynamic teaching ministry has impacted women around the world.",
-      image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop",
-      bookCount: 7,
-    },
-  ];
+  const authors = getAllAuthors();
 
   return (
     <div className="min-h-screen py-12">
@@ -65,7 +24,7 @@ const Authors = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {authors.map((author, index) => (
             <Card
-              key={author.id}
+              key={author.slug}
               className="overflow-hidden card-shadow hover:hover-shadow transition-all duration-300 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
@@ -83,9 +42,11 @@ const Authors = () => {
                   <span className="text-sm text-muted-foreground">
                     {author.bookCount} books available
                   </span>
-                  <Button size="sm" className="gap-2">
-                    <BookOpen className="h-4 w-4" />
-                    View Books
+                  <Button size="sm" className="gap-2" asChild>
+                    <Link to="/shop" state={{ author: author.name }}>
+                      <BookOpen className="h-4 w-4" />
+                      View Books
+                    </Link>
                   </Button>
                 </div>
               </CardContent>

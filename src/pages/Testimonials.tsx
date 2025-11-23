@@ -1,40 +1,46 @@
+import { useMemo, useState } from "react";
 import { Star } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { submitTestimonial, TestimonialError } from "@/lib/testimonial";
+import { getApprovedTestimonials } from "@/lib/testimonials-content";
 
 const Testimonials = () => {
-  const testimonials = [
-    {
-      id: 1,
-      name: "Sarah Okonkwo",
-      message: "Flaming Books has been a blessing to my spiritual journey. The books I've purchased have deepened my faith and transformed my perspective on life.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
-    },
-    {
-      id: 2,
-      name: "Michael Adeyemi",
-      message: "Fast delivery and excellent customer service. The collection of Christian literature is outstanding. Highly recommend!",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop",
-    },
-    {
-      id: 3,
-      name: "Grace Chukwu",
-      message: "As a youth leader, I've found incredible resources here. The books have been instrumental in our bible study groups.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&h=100&fit=crop",
-    },
-    {
-      id: 4,
-      name: "Pastor David Eze",
-      message: "Flaming Books is my go-to source for quality Christian literature. They have an impressive selection for both personal study and ministry use.",
-      rating: 5,
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop",
-    },
-  ];
+  const testimonials = useMemo(() => getApprovedTestimonials(), []);
+
+  const [formData, setFormData] = useState({
+    name: "",
+    rating: 5,
+    message: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await submitTestimonial(formData);
+      toast.success("Thanks for sharing your experience! We'll review it shortly.");
+      setFormData({ name: "", rating: 5, message: "" });
+    } catch (error) {
+      const message =
+        error instanceof TestimonialError
+          ? error.message
+          : "Failed to submit testimonial. Please try again.";
+      toast.error(message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen py-12">
@@ -51,24 +57,17 @@ const Testimonials = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
           {testimonials.map((testimonial, index) => (
             <Card
-              key={testimonial.id}
+              key={testimonial.slug}
               className="card-shadow hover:hover-shadow transition-all duration-300 animate-fade-in"
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardContent className="p-6">
                 <div className="flex items-center gap-4 mb-4">
-                  <img
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    className="w-16 h-16 rounded-full object-cover"
-                  />
-                  <div>
-                    <h3 className="font-semibold text-lg">{testimonial.name}</h3>
-                    <div className="flex gap-1">
-                      {[...Array(testimonial.rating)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-accent text-accent" />
-                      ))}
-                    </div>
+                  <h3 className="font-semibold text-lg">{testimonial.name}</h3>
+                  <div className="flex gap-1">
+                    {[...Array(testimonial.rating)].map((_, i) => (
+                      <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                    ))}
                   </div>
                 </div>
                 <p className="text-muted-foreground italic">"{testimonial.message}"</p>
@@ -84,18 +83,18 @@ const Testimonials = () => {
               <h2 className="font-playfair font-bold text-3xl mb-6 text-center">
                 Share Your Experience
               </h2>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-2">
                     Your Name
                   </label>
-                  <Input id="name" placeholder="Enter your name" />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium mb-2">
-                    Email Address
-                  </label>
-                  <Input id="email" type="email" placeholder="your.email@example.com" />
+                  <Input
+                    id="name"
+                    placeholder="Enter your name"
+                    required
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
                 </div>
                 <div>
                   <label htmlFor="rating" className="block text-sm font-medium mb-2">
@@ -106,9 +105,17 @@ const Testimonials = () => {
                       <button
                         key={star}
                         type="button"
-                        className="p-1 hover:scale-110 transition-transform"
+                        className={`p-1 transition-transform ${
+                          formData.rating === star ? "scale-110" : "hover:scale-110"
+                        }`}
+                        onClick={() => setFormData({ ...formData, rating: star })}
+                        aria-pressed={formData.rating === star}
                       >
-                        <Star className="h-8 w-8 text-accent hover:fill-accent" />
+                        <Star
+                          className={`h-8 w-8 ${
+                            formData.rating >= star ? "fill-accent text-accent" : "text-muted-foreground"
+                          }`}
+                        />
                       </button>
                     ))}
                   </div>
@@ -121,10 +128,13 @@ const Testimonials = () => {
                     id="message"
                     placeholder="Share your experience with Flaming Books..."
                     rows={5}
+                    required
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   />
                 </div>
-                <Button type="submit" size="lg" className="w-full">
-                  Submit Testimonial
+                <Button type="submit" size="lg" className="w-full" disabled={submitting}>
+                  {submitting ? "Submitting..." : "Submit Testimonial"}
                 </Button>
                 <p className="text-xs text-muted-foreground text-center">
                   Your testimonial will be reviewed before being published on our website

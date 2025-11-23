@@ -2,81 +2,17 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Play, Headphones } from "lucide-react";
+import {
+  getGalleryPhotos,
+  getGalleryPodcasts,
+  getGalleryVideos,
+} from "@/lib/gallery";
 
 const Gallery = () => {
   const [activeTab, setActiveTab] = useState("photos");
-
-  const photos = [
-    {
-      id: 1,
-      title: "Book Launch Event",
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop",
-    },
-    {
-      id: 2,
-      title: "Reading Community",
-      image: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=600&h=400&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Author Signing",
-      image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=400&fit=crop",
-    },
-    {
-      id: 4,
-      title: "Book Fair 2023",
-      image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=400&fit=crop",
-    },
-    {
-      id: 5,
-      title: "Youth Workshop",
-      image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=600&h=400&fit=crop",
-    },
-    {
-      id: 6,
-      title: "Community Gathering",
-      image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&h=400&fit=crop",
-    },
-  ];
-
-  const videos = [
-    {
-      id: 1,
-      title: "Book Launch Highlights 2024",
-      thumbnail: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&h=400&fit=crop",
-    },
-    {
-      id: 2,
-      title: "Author Interview: Faith Journey",
-      thumbnail: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=400&fit=crop",
-    },
-    {
-      id: 3,
-      title: "Reading Challenge Recap",
-      thumbnail: "https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=600&h=400&fit=crop",
-    },
-  ];
-
-  const podcasts = [
-    {
-      id: 1,
-      title: "Faith & Literature: Episode 12",
-      description: "Exploring the impact of Christian literature in modern times",
-      duration: "45:30",
-    },
-    {
-      id: 2,
-      title: "Author Spotlight: Writing with Purpose",
-      description: "Interview with bestselling Christian authors",
-      duration: "38:15",
-    },
-    {
-      id: 3,
-      title: "Book Club Discussion: The Journey",
-      description: "Deep dive into transformative Christian classics",
-      duration: "52:20",
-    },
-  ];
+  const photos = getGalleryPhotos();
+  const videos = getGalleryVideos();
+  const podcasts = getGalleryPodcasts();
 
   return (
     <div className="min-h-screen py-12">
@@ -100,9 +36,10 @@ const Gallery = () => {
           {/* Photos Tab */}
           <TabsContent value="photos" className="animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {photos.length === 0 && <p className="text-muted-foreground">No photos yet.</p>}
               {photos.map((photo, index) => (
                 <Card
-                  key={photo.id}
+                  key={photo.slug}
                   className="overflow-hidden card-shadow hover:hover-shadow transition-all duration-300 cursor-pointer animate-fade-in"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
@@ -124,9 +61,10 @@ const Gallery = () => {
           {/* Videos Tab */}
           <TabsContent value="videos" className="animate-fade-in">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {videos.length === 0 && <p className="text-muted-foreground">No videos yet.</p>}
               {videos.map((video, index) => (
                 <Card
-                  key={video.id}
+                  key={video.slug}
                   className="overflow-hidden card-shadow hover:hover-shadow transition-all duration-300 cursor-pointer group animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
@@ -153,9 +91,10 @@ const Gallery = () => {
           {/* Podcasts Tab */}
           <TabsContent value="podcasts" className="animate-fade-in">
             <div className="max-w-3xl mx-auto space-y-4">
+              {podcasts.length === 0 && <p className="text-muted-foreground">No podcasts yet.</p>}
               {podcasts.map((podcast, index) => (
                 <Card
-                  key={podcast.id}
+                  key={podcast.slug}
                   className="card-shadow hover:hover-shadow transition-all duration-300 cursor-pointer animate-fade-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >

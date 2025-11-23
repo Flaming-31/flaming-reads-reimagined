@@ -1,10 +1,13 @@
+# backend:
+#   name: github
+#   repo: Flaming-31/flaming-reads-reimagined
+#   branch: main
+#   base_url: https://yourdomain.com/api
+#   auth_endpoint: auth.php
 backend:
-  name: github
-  repo: Flaming-31/flaming-reads-reimagined
-  branch: main
-  base_url: https://yourdomain.com/api
-  auth_endpoint: auth.php
+  name: git-gateway
 
+local_backend: true
 # Optional: Editorial workflow for content approval
 publish_mode: editorial_workflow
 
@@ -23,7 +26,7 @@ collections:
       - {label: "Author", name: "author", widget: "string"}
       - {label: "Description", name: "description", widget: "text"}
       - {label: "Price", name: "price", widget: "number"}
-      - {label: "Category", name: "category", widget: "select", options: ["Theology", "Devotional", "Christian Living", "Bible Study", "Biography", "Children", "Youth", "Fiction", "Reference"]}
+      - {label: "Category", name: "category", widget: "select", options: ["Theology", "Devotional", "Christian Living", "Journal", "Bible Study", "Biography", "Children", "Youth", "Fiction", "Reference", "Lifestyle", "Health Awareness", "Personal Development"]}
       - {label: "Image", name: "image", widget: "image"}
       - {label: "Featured", name: "featured", widget: "boolean", default: false}
       - {label: "Stock", name: "stock", widget: "number", default: 0}
@@ -45,6 +48,7 @@ collections:
       - {label: "Location", name: "location", widget: "string"}
       - {label: "Image", name: "image", widget: "image"}
       - {label: "Past Event", name: "is_past", widget: "boolean", default: false}
+      - {label: "RSVP / CTA URL", name: "cta_url", widget: "string", required: false}
 
   - name: "authors"
     label: "Authors"
@@ -57,6 +61,55 @@ collections:
       - {label: "Image", name: "image", widget: "image"}
       - {label: "Book Count", name: "book_count", widget: "number", default: 0}
 
+  - name: "collections"
+    label: "Collections"
+    folder: "content/collections"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - label: "Icon"
+        name: "icon"
+        widget: "select"
+        options: ["BookOpen", "Heart", "Home", "Sparkles", "Cross", "Users"]
+      - {label: "Color Gradient", name: "color", widget: "string", default: "from-primary/20 to-primary/5"}
+      - {label: "Book Count", name: "count", widget: "number", default: 0}
+      - {label: "Order", name: "order", widget: "number", default: 0}
+
+  - name: "gallery_photos"
+    label: "Gallery · Photos"
+    folder: "content/gallery/photos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Image", name: "image", widget: "image"}
+      - {label: "Order", name: "order", widget: "number", default: 0}
+
+  - name: "gallery_videos"
+    label: "Gallery · Videos"
+    folder: "content/gallery/videos"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Thumbnail", name: "thumbnail", widget: "image"}
+      - {label: "Video URL", name: "url", widget: "string", required: false}
+      - {label: "Order", name: "order", widget: "number", default: 0}
+
+  - name: "gallery_podcasts"
+    label: "Gallery · Podcasts"
+    folder: "content/gallery/podcasts"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - {label: "Duration", name: "duration", widget: "string"}
+      - {label: "Audio URL", name: "audio_url", widget: "string", required: false}
+      - {label: "Order", name: "order", widget: "number", default: 0}
+
   - name: "testimonials"
     label: "Testimonials"
     folder: "content/testimonials"
@@ -64,7 +117,61 @@ collections:
     slug: "{{slug}}"
     fields:
       - {label: "Name", name: "name", widget: "string"}
-      - {label: "Email", name: "email", widget: "string"}
       - {label: "Rating", name: "rating", widget: "number", min: 1, max: 5}
       - {label: "Message", name: "message", widget: "text"}
       - {label: "Approved", name: "approved", widget: "boolean", default: false}
+
+  - name: "pages_about"
+    label: "Pages · About"
+    files:
+      - label: "About Page"
+        name: "about"
+        file: "content/pages/about.md"
+        fields:
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Subtitle", name: "subtitle", widget: "string"}
+          - label: "Story Paragraphs"
+            name: "story"
+            widget: "list"
+            field: {label: "Paragraph", name: "paragraph", widget: "text"}
+          - label: "Values"
+            name: "values"
+            widget: "list"
+            fields:
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Icon", name: "icon", widget: "select", options: [Heart, Sun, RefreshCw, Target, Award, Star, Feather]} 
+          - label: "Mission"
+            name: "mission"
+            widget: "object"
+            fields:
+              - {label: "Heading", name: "title", widget: "string"}
+              - {label: "Body", name: "body", widget: "text"}
+          - label: "Vision"
+            name: "vision"
+            widget: "object"
+            fields:
+              - {label: "Heading", name: "title", widget: "string"}
+              - {label: "Body", name: "body", widget: "text"}
+          - label: "CTA"
+            name: "cta"
+            widget: "object"
+            fields:
+              - {label: "Title", name: "title", widget: "string"}
+              - {label: "Description", name: "description", widget: "text"}
+              - {label: "Button Label", name: "button", widget: "string"}
+              - {label: "Email Placeholder", name: "placeholder", widget: "string", required: false}
+
+  - name: "blog"
+    label: "Blog Posts"
+    folder: "content/blog"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Author", name: "author", widget: "string", required: false}
+      - {label: "Excerpt", name: "excerpt", widget: "text", required: false}
+      - {label: "Publish Date", name: "date", widget: "datetime"}
+      - {label: "Cover Image", name: "image", widget: "image", required: false}
+      - {label: "Tags", name: "tags", widget: "list", required: false}
+      - {label: "Content", name: "body", widget: "markdown"}

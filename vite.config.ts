@@ -55,5 +55,5 @@ export default defineConfig(({ mode }) => ({
     },
   },
   publicDir: 'public',
-  assetsInclude: ['**/*.yml', '**/*.yaml'],
+  assetsInclude: ['**/*.yml', '**/*.yaml', '**/*.md'],
 }));

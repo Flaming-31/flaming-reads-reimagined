@@ -1,58 +1,19 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { BookOpen, Heart, Home, Sparkles, Cross, Users } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getAllCollections } from "@/lib/collections";
+
+const iconMap = {
+  BookOpen,
+  Heart,
+  Home,
+  Sparkles,
+  Cross,
+  Users,
+};
 
 const Collections = () => {
-  const collections = [
-    {
-      id: 1,
-      title: "Christian Living",
-      description: "Practical wisdom for everyday faith",
-      icon: Cross,
-      count: 45,
-      color: "from-primary/20 to-primary/5",
-    },
-    {
-      id: 2,
-      title: "Devotionals",
-      description: "Daily inspiration and reflection",
-      icon: Heart,
-      count: 32,
-      color: "from-accent/20 to-accent/5",
-    },
-    {
-      id: 3,
-      title: "Family & Marriage",
-      description: "Building strong, godly relationships",
-      icon: Home,
-      count: 28,
-      color: "from-secondary/40 to-secondary/10",
-    },
-    {
-      id: 4,
-      title: "Theology",
-      description: "Deep study of biblical truth",
-      icon: BookOpen,
-      count: 38,
-      color: "from-primary/20 to-primary/5",
-    },
-    {
-      id: 5,
-      title: "Spiritual Growth",
-      description: "Deepen your walk with God",
-      icon: Sparkles,
-      count: 52,
-      color: "from-accent/20 to-accent/5",
-    },
-    {
-      id: 6,
-      title: "Leadership & Ministry",
-      description: "Resources for Christian leaders",
-      icon: Users,
-      count: 24,
-      color: "from-secondary/40 to-secondary/10",
-    },
-  ];
+  const collections = getAllCollections();
 
   return (
     <div className="min-h-screen py-12">
@@ -70,10 +31,10 @@ const Collections = () => {
         {/* Collections Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {collections.map((collection, index) => {
-            const Icon = collection.icon;
+            const Icon = iconMap[collection.icon as keyof typeof iconMap] ?? BookOpen;
             return (
               <Link
-                key={collection.id}
+                key={collection.slug}
                 to="/shop"
                 state={{ category: collection.title }}
                 className="animate-fade-in"

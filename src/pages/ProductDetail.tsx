@@ -1,79 +1,19 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ShoppingCart, Star, ArrowLeft } from "lucide-react";
 import { useCart } from "@/contexts/CartContext";
-import { toast } from "sonner";
-
-interface Product {
-  id: string;
-  title: string;
-  author: string;
-  description: string;
-  price: number;
-  image: string;
-  category: string;
-  isbn: string;
-  publisher: string;
-  pages: number;
-  stock: number;
-}
-
-interface Review {
-  id: string;
-  rating: number;
-  comment: string;
-  created_at: string;
-  user_id: string;
-}
+import { getBookBySlug } from "@/lib/books";
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const { addToCart, loading: cartLoading } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) {
-        console.error("Error fetching product:", error);
-        toast.error("Product not found");
-      } else {
-        setProduct(data);
-      }
-
-      const { data: reviewsData } = await supabase
-        .from("reviews")
-        .select("*")
-        .eq("product_id", id)
-        .order("created_at", { ascending: false });
-
-      if (reviewsData) {
-        setReviews(reviewsData);
-      }
-
-      setLoading(false);
-    };
-
-    fetchProduct();
+  const product = useMemo(() => {
+    if (!id) return null;
+    return getBookBySlug(id);
   }, [id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-secondary flex items-center justify-center">
-        <p>Loading...</p>
-      </div>
-    );
-  }
 
   if (!product) {
     return (
@@ -88,9 +28,7 @@ const ProductDetail = () => {
     );
   }
 
-  const avgRating = reviews.length > 0
-    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-    : 0;
+  const avgRating = 0;
 
   return (
     <div className="min-h-screen bg-secondary py-20">
@@ -124,9 +62,7 @@ const ProductDetail = () => {
                   }`}
                 />
               ))}
-              <span className="text-sm text-muted-foreground">
-                ({reviews.length} reviews)
-              </span>
+              <span className="text-sm text-muted-foreground">(0 reviews)</span>
             </div>
 
             <p className="text-4xl font-bold text-primary mb-6">
@@ -158,30 +94,7 @@ const ProductDetail = () => {
         <Card>
           <CardContent className="p-6">
             <h2 className="font-playfair font-bold text-2xl mb-6">Customer Reviews</h2>
-            {reviews.length === 0 ? (
-              <p className="text-muted-foreground">No reviews yet. Be the first to review!</p>
-            ) : (
-              <div className="space-y-6">
-                {reviews.map((review) => (
-                  <div key={review.id} className="border-b pb-4 last:border-b-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < review.rating ? "fill-accent text-accent" : "text-muted"
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {new Date(review.created_at).toLocaleDateString()}
-                    </p>
-                    <p>{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            )}
+            <p className="text-muted-foreground">Reviews are coming soon.</p>
           </CardContent>
         </Card>
       </div>

@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Phone, Clock } from "lucide-react";
 import { toast } from "sonner";
+import { submitContactForm, ContactFormError } from "@/lib/contact";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -26,14 +27,16 @@ const Contact = () => {
     setLoading(true);
     
     try {
-      // Here you would typically send the form data to your backend
-      // For now, we'll just show a success message
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await submitContactForm(formData);
+
       toast.success("Message sent successfully! We'll get back to you soon.");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
-      toast.error("Failed to send message. Please try again.");
+      const message =
+        error instanceof ContactFormError
+          ? error.message
+          : "Failed to send message. Please try again.";
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,7 @@ const Contact = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contact Information */}
           <div className="lg:col-span-1 space-y-6">
-            <Card className="card-shadow animate-fade-in">
+            {/* <Card className="card-shadow animate-fade-in">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 hero-gradient rounded-lg flex items-center justify-center flex-shrink-0">
@@ -64,7 +67,7 @@ const Contact = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             <Card className="card-shadow animate-fade-in" style={{ animationDelay: "0.1s" }}>
               <CardContent className="p-6">
@@ -74,7 +77,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-1">Call Us</h3>
-                    <p className="text-muted-foreground">+234 XXX XXX XXXX</p>
+                    <p className="text-muted-foreground">+234 903 440 2919</p>
                   </div>
                 </div>
               </CardContent>
@@ -94,7 +97,7 @@ const Contact = () => {
               </CardContent>
             </Card>
 
-            <Card className="card-shadow animate-fade-in" style={{ animationDelay: "0.3s" }}>
+            {/* <Card className="card-shadow animate-fade-in" style={{ animationDelay: "0.3s" }}>
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 hero-gradient rounded-lg flex items-center justify-center flex-shrink-0">
@@ -110,7 +113,7 @@ const Contact = () => {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
 
           {/* Contact Form */}

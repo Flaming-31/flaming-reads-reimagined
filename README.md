@@ -64,6 +64,13 @@ This project is built with:
 
 Simply open [Lovable](https://lovable.dev/projects/47deedcd-522f-4b97-93c5-035bae4de2c2) and click on Share -> Publish.
 
+## Managing Blog Posts
+
+- Blog content lives in `content/blog/*.md` files. Each post uses frontmatter fields: `title`, `author`, `excerpt`, `date`, `image`, and `tags` with the markdown body following the closing `---` line.
+- Decap CMS now exposes a **Blog Posts** collection so editors can create and edit articles visually. When a post is published, its markdown file is committed alongside other content.
+- The `/blog` page lists posts using the frontmatter metadata (date, excerpt, tags), and `/blog/:slug` renders the rich markdown body via `react-markdown`.
+- To add posts manually, drop a new markdown file in `content/blog/` with the desired slug and metadata, then restart the dev server if it's running so Vite picks up the new file.
+
 ## Can I connect a custom domain to my Lovable project?
 
 Yes, you can!
