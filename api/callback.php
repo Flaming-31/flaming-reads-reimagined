@@ -96,7 +96,9 @@ if (empty($accessToken)) {
     <script>
         (function() {
             var token = '<?php echo htmlspecialchars($accessToken, ENT_QUOTES, 'UTF-8'); ?>';
-            var message = 'authorization:github:success:' + token;
+            // Decap CMS expects JSON format: {"token":"xxx","provider":"github"}
+            var tokenData = JSON.stringify({ token: token, provider: 'github' });
+            var message = 'authorization:github:success:' + tokenData;
             
             console.log('Callback loaded, token received');
             console.log('Sending postMessage:', message.substring(0, 50) + '...');
