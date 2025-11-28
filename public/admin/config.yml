@@ -1,13 +1,16 @@
 # backend:
 #   name: github
-#   repo: Flaming-31/flaming-reads-reimagined
+#   repo: Flaming-31/flaming-reads-reimagined   # update to your repo
 #   branch: main
-#   base_url: https://yourdomain.com/api
-#   auth_endpoint: auth.php
+  # site_domain: https://iyamamacare.com   # optional but recommended
 backend:
-  name: git-gateway
+  name: github
+  repo: Flaming-31/flaming-reads-reimagined
+  branch: main
+  base_url: https://flamingbooks.com.ng/api
+  auth_endpoint: auth.php
 
-local_backend: true
+# local_backend: true
 # Optional: Editorial workflow for content approval
 publish_mode: editorial_workflow
 

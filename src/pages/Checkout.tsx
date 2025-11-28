@@ -49,11 +49,13 @@ const Checkout = () => {
     setLoading(false);
   };
 
+  const paystackPublicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+
   const paystackConfig = {
     reference: new Date().getTime().toString(),
     email: formData.email,
     amount: total * 100, // Paystack expects amount in kobo
-    publicKey: "pk_test_948eacc907fee263bff53d1de566263773218ce2", // Replace with your Paystack public key
+    publicKey: paystackPublicKey ?? "",
   };
 
   const handlePaystackSuccess = (reference: any) => {

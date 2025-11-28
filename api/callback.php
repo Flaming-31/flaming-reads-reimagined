@@ -95,25 +95,62 @@ if (empty($accessToken)) {
     </div>
     <script>
         (function() {
-            function receiveMessage(message) {
-                window.opener.postMessage(
-                    'authorization:github:success:<?php echo htmlspecialchars($accessToken, ENT_QUOTES, 'UTF-8'); ?>',
-                    message.origin
-                );
+            var token = '<?php echo htmlspecialchars($accessToken, ENT_QUOTES, 'UTF-8'); ?>';
+            var message = 'authorization:github:success:' + token;
+            
+            console.log('Callback loaded, token received');
+            console.log('Sending postMessage:', message.substring(0, 50) + '...');
+            
+            function sendMessage(targetOrigin) {
+                if (window.opener && !window.opener.closed) {
+                    console.log('Sending to opener with origin:', targetOrigin);
+                    window.opener.postMessage(message, targetOrigin);
+                    
+                    // Try closing the window after a short delay
+                    setTimeout(function() {
+                        window.close();
+                    }, 1000);
+                } else {
+                    console.error('No window.opener found or opener is closed');
+                    // Fallback: redirect to admin
+                    setTimeout(function() {
+                        window.location.href = '/admin/';
+                    }, 2000);
+                }
             }
-
+            
+            // Listen for ready message from parent
+            function receiveMessage(event) {
+                console.log('Received message:', event.data, 'from:', event.origin);
+                // Decap CMS sends "authorizing:github" when ready
+                if (event.data === 'authorizing:github') {
+                    console.log('Parent is ready, sending auth result');
+                    sendMessage(event.origin);
+                    window.removeEventListener('message', receiveMessage);
+                }
+            }
+            
+            // Listen for parent ready signal
             window.addEventListener('message', receiveMessage, false);
             
-            // Send token to opener
-            window.opener.postMessage(
-                'authorization:github:success:<?php echo htmlspecialchars($accessToken, ENT_QUOTES, 'UTF-8'); ?>',
+            // Also try sending immediately to common origins
+            var possibleOrigins = [
+                'https://flamingbooks.com.ng',
                 window.location.origin
-            );
+            ];
             
-            // Close window after a short delay
-            setTimeout(function() {
-                window.close();
-            }, 1000);
+            // Send to parent immediately
+            if (window.opener) {
+                // First, let the parent know we're ready
+                window.opener.postMessage('authorizing:github', '*');
+                
+                // Try sending the message after a short delay
+                setTimeout(function() {
+                    possibleOrigins.forEach(function(origin) {
+                        sendMessage(origin);
+                    });
+                }, 100);
+            }
         })();
     </script>
 </body>

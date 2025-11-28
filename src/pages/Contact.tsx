@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, MapPin, Phone, Clock } from "lucide-react";
+import { Mail, MapPin, Phone, Clock, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { submitContactForm, ContactFormError } from "@/lib/contact";
 
@@ -173,9 +173,28 @@ const Contact = () => {
                       onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                     />
                   </div>
-                  <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                    {loading ? "Sending..." : "Send Message"}
-                  </Button>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Button type="submit" size="lg" className="w-full" disabled={loading}>
+                      {loading ? "Sending..." : "Send Message"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="lg"
+                      className="w-full"
+                      asChild
+                    >
+                      <a
+                        href="https://wa.me/2349034402919"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center gap-2"
+                      >
+                        <MessageCircle className="h-5 w-5" />
+                        Send WhatsApp Message
+                      </a>
+                    </Button>
+                  </div>
                 </form>
               </CardContent>
             </Card>
