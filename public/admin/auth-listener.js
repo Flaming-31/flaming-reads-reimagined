@@ -23,9 +23,30 @@
         // Check if it's recent (within last 10 seconds)
         if (Date.now() - data.timestamp < 10000) {
           console.log('✓ Auth found in localStorage:', data.message);
-          // Trigger Decap CMS authentication
+          
+          // Parse the auth message to extract token
+          // Format: "authorization:github:success:{"token":"xxx","provider":"github"}"
+          const match = data.message.match(/^authorization:github:success:(.+)$/);
+          if (match) {
+            const tokenData = JSON.parse(match[1]);
+            console.log('✓ Token extracted, storing for Decap CMS');
+            
+            // Store token directly in Decap CMS format
+            const userData = {
+              token: tokenData.token,
+              backendName: 'github'
+            };
+            localStorage.setItem('netlify-cms-user', JSON.stringify(userData));
+            
+            // Clean up and reload to trigger Decap to read the token
+            localStorage.removeItem('decap-cms-auth-result');
+            console.log('✓ Reloading page to complete login...');
+            window.location.reload();
+            return;
+          }
+          
+          // Fallback: try postMessage anyway
           window.postMessage(data.message, window.location.origin);
-          // Clean up
           localStorage.removeItem('decap-cms-auth-result');
         }
       }
