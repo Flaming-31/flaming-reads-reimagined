@@ -5,9 +5,14 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Your GitHub OAuth credentials
-define('GITHUB_CLIENT_ID', 'your_github_client_id_here');
-define('GITHUB_CLIENT_SECRET', 'your_github_client_secret_here');
+// Your GitHub OAuth credentials (never hardcode secrets in this file)
+$clientId = getenv('OAUTH_CLIENT_ID') ?: (defined('OAUTH_CLIENT_ID') ? OAUTH_CLIENT_ID : '');
+$clientSecret = getenv('OAUTH_CLIENT_SECRET') ?: (defined('OAUTH_CLIENT_SECRET') ? OAUTH_CLIENT_SECRET : '');
+
+if (empty($clientId) || empty($clientSecret)) {
+    renderHTML('error', ['error' => 'OAuth credentials missing', 'error_description' => 'Set OAUTH_CLIENT_ID and OAUTH_CLIENT_SECRET in your environment.']);
+    exit();
+}
 
 $code = $_GET['code'] ?? '';
 $state = $_GET['state'] ?? '';
@@ -28,8 +33,8 @@ if (empty($code)) {
 // Exchange code for access token
 $token_url = 'https://github.com/login/oauth/access_token';
 $post_data = [
-    'client_id' => GITHUB_CLIENT_ID,
-    'client_secret' => GITHUB_CLIENT_SECRET,
+    'client_id' => $clientId,
+    'client_secret' => $clientSecret,
     'code' => $code
 ];
 
